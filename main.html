@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>wikiclick</title>
+<script>
+function google_open() {
+  var open = require("open");
+  open('http://www.google.com');
+}
+var hoge = {};
+var lineReader = require('readline').createInterface({
+  input: require('fs').createReadStream('title_url_abstract_en.tsv')
+});
+
+var i = 0;
+lineReader.on('line', function (line) {
+  ++i;
+  hoge[i++] = line;
+  
+  //i++;
+  if (i % 100000 == 0) {
+    document.getElementById('btn').value = i;
+  }
+});
+
+lineReader.on('close', (input) => {
+  //console.log(`Received: ${input}`);
+  document.getElementById('btn').value = "done";
+  document.body.innerHTML += hoge[0];
+});
+
+function init() {
+    require('fs').readdir("./", function (err, files) {
+        files.forEach(function (file_name) {
+            document.body.innerHTML += file_name + '<br />';
+        });
+    })
+}
+</script>
+</head>
+<body onload="init()">
+<p><button onclick="google_open();">Google</button>
+<input id="btn" type="button" value="loading" />
+</p>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "name": "Wikickick",
+  "version": "0.0.1",
+  "description": "A wiki click",
+  "keywords": [
+    "casual"
+  ],
+  "homepage": "https://github.com/horaguchi/wikiclick",
+  "bugs": {
+    "url": "https://github.com/horaguchi/wikiclick/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Koji Horaguchi <koji.horaguchi@gmail.com> (http://horaguchi.github.io/)",
+  "main": "./main.html",
+  "bin": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/horaguchi/wikiclick.git"
+  },
+  "scripts": {
+    "start": "nw",
+    "clean": "sh clean.sh",
+    "dist": "sh dist.sh"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "open": "0.0.5"
+  },
+  "devDependencies": {
+    "nw": "0.18.5",
+    "nw-builder": "3.1.1"
+  }
+}
