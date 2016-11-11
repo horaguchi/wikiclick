@@ -6,34 +6,69 @@ function google_open() {
   var open = require("open");
   open('http://www.google.com');
 }
-var hoge = {};
-var lineReader = require('readline').createInterface({
-  input: require('fs').createReadStream('title_url_abstract_en.tsv')
-});
 
-var i = 0;
-lineReader.on('line', function (line) {
-  ++i;
-  hoge[i++] = line;
-  
-  //i++;
-  if (i % 100000 == 0) {
-    document.getElementById('btn').value = i;
+function shuffle(array) {
+  var n = array.length, t, i;
+
+  while (n) {
+    i = Math.floor(Math.random() * n--);
+    t = array[n];
+    array[n] = array[i];
+    array[i] = t;
   }
-});
 
-lineReader.on('close', (input) => {
-  //console.log(`Received: ${input}`);
-  document.getElementById('btn').value = "done";
-  document.body.innerHTML += hoge[0];
-});
+  return array;
+}
+
+function select_from_filearr() {
+    var result_arr = [];
+    var size = 10000;
+    var line_num = 0;
+    var file_name = 'title_url_abstract_en.tsv.gz';
+    var firstReadline = require('readline').createInterface({
+        input: require('fs').createReadStream(file_name).pipe(require('zlib').createGunzip())
+    });
+    firstReadline.on('line', function (line) {
+        ++line_num;
+        if (line_num % 100000 == 0) {
+          document.body.innerHTML += "reading: " + line_num + '<br>';
+        }
+    });
+    firstReadline.on('close', function (input) {
+        document.body.innerHTML += "first done: " + line_num + '<br>';
+
+        var secoundReadline = require('readline').createInterface({
+            input: require('fs').createReadStream(file_name).pipe(require('zlib').createGunzip())
+        });
+        var i = 0;
+        secoundReadline.on('line', function (line) {
+            ++i;
+            if (i % 100000 == 0) {
+                document.body.innerHTML += "2nd reading: " + i + '<br>';
+            }
+            if (Math.random() < size / line_num ) {
+                result_arr.push(line);
+            }
+        });
+        secoundReadline.on('close', function (line) {
+            shuffle(result_arr);
+            document.body.innerHTML += result_arr[0] + '<br>';
+            document.body.innerHTML += result_arr[1] + '<br>';
+            document.body.innerHTML += result_arr[2] + '<br>';
+            document.body.innerHTML += result_arr[3] + '<br>';
+            document.body.innerHTML += result_arr[4] + '<br>';
+            document.body.innerHTML += result_arr[5] + '<br>';
+            document.body.innerHTML += result_arr[6] + '<br>';
+            document.body.innerHTML += result_arr[7] + '<br>';
+            document.body.innerHTML += result_arr[8] + '<br>';
+            document.body.innerHTML += result_arr[9] + '<br>';
+            document.body.innerHTML += "second done: " + result_arr.length + " / " + size + '<br>';
+        });
+    });
+}
 
 function init() {
-    require('fs').readdir("./", function (err, files) {
-        files.forEach(function (file_name) {
-            document.body.innerHTML += file_name + '<br />';
-        });
-    })
+    select_from_filearr();
 }
 </script>
 </head>
