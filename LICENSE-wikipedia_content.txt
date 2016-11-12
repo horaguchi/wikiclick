@@ -1,0 +1,4 @@
+https://meta.wikimedia.org/wiki/Data_dumps
+All text content is multi-licensed under the Creative Commons Attribution-ShareAlike 3.0 License (CC-BY-SA) and the GNU Free Documentation License (GFDL).
+
+- title_url_abstract_**.tsv.gz

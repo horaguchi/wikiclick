@@ -1,10 +1,18 @@
 <html>
 <head>
 <title>wikiclick</title>
+<style>
+body {
+    word-wrap: break-word;
+    white-space: normal;
+}
+</style>
 <script>
-function google_open() {
+function browser_open(url, element) {
   var open = require("open");
-  open('http://www.google.com');
+  open(url);
+  element.style.color = "purple";
+  return false;
 }
 
 function shuffle(array) {
@@ -20,10 +28,11 @@ function shuffle(array) {
   return array;
 }
 
+var result_arr = [];
 function wiki_load(lang) {
-    var result_arr = [];
     var max_file_size = 3000000 * 2; // 50% is max
-    var store_size = 10000;
+    var store_size = 100000;
+    var loading_period_size = 50000;
     var line_num = 0;
     var file_name = 'title_url_abstract_' + lang + '.tsv.gz';
     var firstReadline = require('readline').createInterface({
@@ -31,7 +40,7 @@ function wiki_load(lang) {
     });
     firstReadline.on('line', function (line) {
         ++line_num;
-        if (line_num % 50000 == 0) {
+        if (line_num % loading_period_size == 0) {
           document.body.innerHTML = 'Loading... ' + Math.floor(line_num * 100 / max_file_size) + '%';
         }
     });
@@ -44,7 +53,7 @@ function wiki_load(lang) {
         var read_num = 0;
         secoundReadline.on('line', function (line) {
             ++read_num;
-            if (read_num % 50000 == 0) {
+            if (read_num % loading_period_size == 0) {
                 document.body.innerHTML = 'Loading... ' + (Math.floor(read_num * 100 / line_num / 2) + 50) + '%';
             }
             if (Math.random() < store_size / line_num ) {
@@ -53,10 +62,29 @@ function wiki_load(lang) {
         });
         secoundReadline.on('close', function (line) {
             shuffle(result_arr);
-            document.body.innerHTML = result_arr[0] + '<br>';
-            document.body.innerHTML += result_arr.length + " / " + store_size + '<br>';
+            document.body.innerHTML = '';
+            add_link(1000);
+            //document.body.innerHTML = result_arr.length + " / " + store_size + '<br>';
+            window.onscroll = function(ev) {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                    add_link();
+                }
+            };
         });
     });
+}
+
+var added_num = 0;
+function add_link(num) {
+    var load_num = num || 500;
+    var load_max = Math.min(added_num + load_num, result_arr.length);
+    html_add = "";
+    for (var i = added_num; i < load_max; ++i) {
+        var columns = result_arr[i].split("\t")
+        html_add += '<a href="' + columns[1] + '" onclick="return browser_open(' + "'" + columns[1] + "'" + ', this)">' + columns[2] + '</a> ';
+    }
+    document.body.innerHTML += html_add;
+    added_num = i;
 }
 
 function read_current_dir() {
@@ -64,7 +92,7 @@ function read_current_dir() {
         var body_html = '';
         list.forEach(function (file_name) {
             if (/^title_url_abstract_(.*)\.tsv\.gz$/.test(file_name)) {
-                 body_html += '<button onclick="wiki_load(' + "'" + RegExp.$1 + "'" + ')">' + file_name + ' ' + RegExp.$1 + '</button><br>';
+                 body_html += '<button onclick="wiki_load(' + "'" + RegExp.$1 + "'" + ')">' + file_name + ' (' + RegExp.$1 + ')</button><br><br>';
             }
         });
         document.body.innerHTML = body_html;
@@ -77,8 +105,6 @@ function init() {
 </script>
 </head>
 <body onload="init()">
-<p><button onclick="google_open();">Google</button>
-<input id="btn" type="button" value="loading" />
-</p>
+Loading...
 </body>
 </html>
