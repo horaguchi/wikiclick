@@ -12,8 +12,6 @@
   "license": "Apache-2.0",
   "author": "Koji Horaguchi <koji.horaguchi@gmail.com> (http://horaguchi.github.io/)",
   "main": "./main.html",
-  "bin": {
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/horaguchi/wikiclick.git"
